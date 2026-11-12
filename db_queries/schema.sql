@@ -1,15 +1,15 @@
-CREATE TABLE game(
+CREATE TABLE IF NOT EXISTS game(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
     genre TEXT
 )
 
-CREATE TABLE platform(
+CREATE TABLE IF NOT EXISTS platform(
     id INTEGER PRIMARY KEY,
     name TEXT UNIQUE NOT NULL 
 )
 
-CREATE TABLE playthrough(
+CREATE TABLE IF NOT EXISTS playthrough(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT,
@@ -18,7 +18,7 @@ CREATE TABLE playthrough(
     platform_id INTEGER NOT NULL REFERENCES platform(id)
 )
 
-CREATE TABLE objective(
+CREATE TABLE IF NOT EXISTS objective(
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
     type TEXT,
@@ -28,5 +28,3 @@ CREATE TABLE objective(
     parent_id INTEGER references objective(id) ON DELETE CASCADE,
     playthrough_id INTEGER NOT NULL REFERENCES playthrough(id)
 )
-
-INSERT INTO game(title, genre) VALUES ("Dragon's Dogma 2: Dark Arisen", "Action RPG")
