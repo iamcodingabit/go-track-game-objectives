@@ -28,3 +28,5 @@ CREATE TABLE objective(
     parent_id INTEGER references objective(id) ON DELETE CASCADE,
     playthrough_id INTEGER NOT NULL REFERENCES playthrough(id)
 )
+
+INSERT INTO game(title, genre) VALUES ("Dragon's Dogma 2: Dark Arisen", "Action RPG")
