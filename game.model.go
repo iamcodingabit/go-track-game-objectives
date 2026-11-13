@@ -36,33 +36,3 @@ type Game struct {
 	CreatedAt string `json:"created_at,omitempty"`
 }
 
-func(g *Game) AddGame() (Game, error) {
-	db := ConnectDB()
-
-	query := `INSERT INTO game(title, genre)
-		VALUES(?, ?) RETURNING *`
-
-	statement, err := db.Prepare(query)
-	if err != nil {
-		return Game{}, err
-	}
-
-	defer statement.Close()
-
-	var newGame Game
-	err = statement.QueryRow(
-		g.Title,
-		g.Genre,
-	).Scan(
-		&newGame.ID,
-		&newGame.Title,
-		&newGame.Genre,
-		&newGame.CreatedAt,
-	)
-
-	if err != nil {
-		return Game{}, err
-	}
-
-	return newGame, nil
-}

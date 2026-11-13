@@ -3,37 +3,38 @@ package main
 import (
 	"database/sql"
 	"log"
+	_ "modernc.org/sqlite"
 )
 
-var db *sql.DB
 
-func ConnectDB() *sql.DB {
-	var err error
-	db, err = sql.Open("sqlite3", "./app.sqlite")
+
+func initDB() (*sql.DB, error) {
+	db, err := sql.Open("sqlite", "app.db")
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %s", err.Error())
 	}
 
 	log.Println("Database connection successful")
 
-	return db
+	return db, err;
 }
 
-func MakeMigrations() error {
-	db := ConnectDB()
+
+func MakeMigrations() {
+	db, err := initDB()
 
 	statement := `CREATE TABLE IF NOT EXISTS game(
 		id INTEGER PRIMARY KEY,
 		title TEXT NOT NULL,
 		genre TEXT,
 		created_at TIMESTAMP DEFAULT DATETIME
-	)
+	);
 
 	CREATE TABLE IF NOT EXISTS platform(
 		id INTEGER PRIMARY KEY,
 		name TEXT UNIQUE NOT NULL,
 		created_at TIMESTAMP DEFAULT DATETIME
-	)
+	);
 
 	CREATE TABLE IF NOT EXISTS playthrough(
 		id INTEGER PRIMARY KEY,
@@ -43,7 +44,7 @@ func MakeMigrations() error {
 		game_id INTEGER NOT NULL REFERENCES game(id),
 		platform_id INTEGER NOT NULL REFERENCES platform(id),
 		created_at TIMESTAMP DEFAULT DATETIME
-	)
+	);
 
 	CREATE TABLE IF NOT EXISTS objective(
 		id INTEGER PRIMARY KEY,
@@ -55,11 +56,12 @@ func MakeMigrations() error {
 		parent_id INTEGER references objective(id) ON DELETE CASCADE,
 		playthrough_id INTEGER NOT NULL REFERENCES playthrough(id),
 		created_at TIMESTAMP DEFAULT DATETIME
-	)`
+	);`
 
-	_, err := db.Exec(statement)
+	_, err = db.Exec(statement)
 	if err != nil {
-		return err
+		log.Fatalf("SOMETHING'S WRONG, I CAN FEEL IT! %s", err)
 	}
-	return nil
+
+	log.Println("Migration successful!")
 }
