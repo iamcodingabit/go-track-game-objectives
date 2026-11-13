@@ -35,4 +35,3 @@ type Game struct {
 	Genre string `json:"genre"`
 	CreatedAt string `json:"created_at,omitempty"`
 }
-
