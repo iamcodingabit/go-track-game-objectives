@@ -24,13 +24,33 @@ func main(){
 	app := &App{DB: db}
 
 	router := http.NewServeMux();
-	router.HandleFunc("GET /", app.helloNewWorldHandler)
+	router.HandleFunc("GET /game", app.getAllGames)
 	router.HandleFunc("POST /game", app.addGameHandler)
 	http.ListenAndServe(":8080", router)
 }
 
-func(app *App) helloNewWorldHandler(write http.ResponseWriter, read *http.Request){
-	fmt.Println("Hello, new world, all the boys and girls, I get a story to tellllll")
+func(app *App) getAllGames(write http.ResponseWriter, read *http.Request){
+	rows, err := app.DB.Query(`SELECT title, genre FROM game`)
+	if err != nil {
+		log.Println("Failed reading from database")
+		return
+	}
+	defer rows.Close()
+
+	var games []Game
+	for rows.Next() {
+		var game Game
+		if err := rows.Scan(&game.Title, &game.Genre); err != nil {
+			log.Fatal(err)
+		}
+		games = append(games, game)
+	}	
+
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(games)
 }
 
 func(app *App) addGameHandler(write http.ResponseWriter, read *http.Request){
