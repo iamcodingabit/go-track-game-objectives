@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -49,8 +48,8 @@ func(app *App) getAllGames(write http.ResponseWriter, read *http.Request){
 	if err := rows.Err(); err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println(games)
+	write.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(write).Encode(games)
 }
 
 func(app *App) addGameHandler(write http.ResponseWriter, read *http.Request){
