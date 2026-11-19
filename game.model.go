@@ -29,9 +29,3 @@ type Playthrough struct {
 	Objectives []Objective `json:"objectives"`
 }
 
-type Game struct {
-	ID int `json:"id,omitempty"`
-	Title string `json:"title"`
-	Genre string `json:"genre"`
-	CreatedAt string `json:"created_at,omitempty"`
-}
