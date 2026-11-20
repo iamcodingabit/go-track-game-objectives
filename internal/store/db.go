@@ -31,17 +31,6 @@ func NewStore (dbPath string ) (*Store, error) {
 	}, nil
 }
 
-func initDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite", "journal.db")
-	if err != nil {
-		log.Fatalf("Failed to connect to the database: %s", err.Error())
-	}
-
-	log.Println("Database connection successful")
-
-	return db, err;
-}
-
 func (s *Store) Close() error {
 	return s.db.Close()
 }
