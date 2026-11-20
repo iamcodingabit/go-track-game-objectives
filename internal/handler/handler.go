@@ -8,17 +8,17 @@ import (
 )
 
 type GameHandler struct {
-	games *store.GameStore
+	store *store.GameStore
 }
 
-func NewGameHandler(games *store.GameStore) *GameHandler {
+func NewGameHandler(s *store.Store) *GameHandler {
 	return &GameHandler{
-		games: games,
+		store: s.Games,
 	}
 }
 
 func(gh *GameHandler) GetAllGamesHandler(w http.ResponseWriter, r *http.Request){
-	games, err := gh.games.GetAllGames(r.Context())
+	games, err := gh.store.GetAllGames(r.Context())
 	if err != nil {
 		log.Println("fetch games error:", err)
 		http.Error(w, "failed to retrieve games", http.StatusInternalServerError)

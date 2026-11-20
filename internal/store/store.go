@@ -16,10 +16,6 @@ type GameStore struct {
 	db *sql.DB
 }
 
-func NewGameStore(db *sql.DB) *GameStore {
-	return &GameStore{db: db}
-}
-
 func (gs *GameStore) GetAllGames(ctx context.Context) ([]Game, error){
 	rows, err := gs.db.Query(`SELECT title, genre FROM game`)
 	if err != nil {
