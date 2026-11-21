@@ -10,12 +10,17 @@ templ Base(title string) {
             <title>{title}</title>
         </head>
         <body>
-            <header>
+            <header class="container">
                 <nav>
-                    <a href="/">Hello</a>
+                    <ul>
+                        <li><strong>go-track-game-objectives</strong></li>
+                    </ul>
+                    <ul>
+                        <li><a href="/">Hello</a></li>
+                    </ul>
                 </nav>
             </header>
-            <main class="container breakout-all">
+            <main class="container breakout">
                 {children...}
             </main>
         </body>

@@ -40,7 +40,7 @@ func Base(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title></head><body><header><nav><a href=\"/\">Hello</a></nav></header><main class=\"container breakout-all\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title></head><body><header class=\"container\"><nav><ul><li><strong>go-track-game-objectives</strong></li></ul><ul><li><a href=\"/\">Hello</a></li></ul></nav></header><main class=\"container breakout\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
