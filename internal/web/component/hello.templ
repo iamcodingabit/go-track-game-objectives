@@ -1,13 +1,10 @@
 package component
 
 import (
-    "iamcodingabit/go-track-game-objectives/internal/store"
-	
-	"context"
-	"log"
+  "iamcodingabit/go-track-game-objectives/internal/store"
 )
 
-templ HelloWorld(db *store.Store, ctx context.Context) {
+templ HelloWorld(gameList []store.Game) {
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -17,18 +14,16 @@ templ HelloWorld(db *store.Store, ctx context.Context) {
       <title>My first app with GOTTH</title>
     </head>
     <body>
-      <header >
-        <h1>Hello worldwewewewe</h1>
-        {{ 
-            game, err := db.Games.GetAllGames(ctx)
-            if err != nil { log.Println("How dare.") }
-            gameString, err := templ.JSONString(game)
-            
-        
-        }}
-
-        {gameString}
-      </header>
+      <main class="container breakout-all">
+        <h1>Skiiwhoa</h1>
+        <ul>
+          for _, game := range gameList {
+            <li>
+              {game.Title} <small>{game.Genre}</small>
+            </li>
+          }
+        </ul>
+      </main>
     </body>
     </html>
 }
