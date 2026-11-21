@@ -1,0 +1,34 @@
+package component
+
+import (
+    "iamcodingabit/go-track-game-objectives/internal/store"
+	
+	"context"
+	"log"
+)
+
+templ HelloWorld(db *store.Store, ctx context.Context) {
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href=" https://cdn.jsdelivr.net/npm/@sveti/blades@3/css/blades.min.css"/>
+      <title>My first app with GOTTH</title>
+    </head>
+    <body>
+      <header >
+        <h1>Hello worldwewewewe</h1>
+        {{ 
+            game, err := db.Games.GetAllGames(ctx)
+            if err != nil { log.Println("How dare.") }
+            gameString, err := templ.JSONString(game)
+            
+        
+        }}
+
+        {gameString}
+      </header>
+    </body>
+    </html>
+}
