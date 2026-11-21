@@ -5,6 +5,7 @@ import (
 	"iamcodingabit/go-track-game-objectives/internal/store"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type GameHandler struct {
@@ -27,6 +28,26 @@ func(gh *GameHandler) GetAllGamesHandler(w http.ResponseWriter, r *http.Request)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(games)
+}
+
+func (gh *GameHandler) DeleteGameHandler(w http.ResponseWriter, r *http.Request){
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		return
+	}
+
+	deletedTitle, err := gh.store.DeleteGameById(r.Context(), id)
+	if err != nil {
+		return
+	}
+	
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "deleted successfully",
+		"title":   deletedTitle,
+	})
 }
 
 /*

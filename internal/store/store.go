@@ -17,7 +17,7 @@ type GameStore struct {
 }
 
 func (gs *GameStore) GetAllGames(ctx context.Context) ([]Game, error){
-	rows, err := gs.db.Query(`SELECT title, genre FROM game`)
+	rows, err := gs.db.QueryContext(ctx, `SELECT id, title, genre FROM game`)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func (gs *GameStore) GetAllGames(ctx context.Context) ([]Game, error){
 	
 	for rows.Next() {
 		var game Game
-		if err := rows.Scan(&game.Title, &game.Genre); err != nil {
+		if err := rows.Scan(&game.ID, &game.Title, &game.Genre); err != nil {
 			return nil, err
 		}
 		games = append(games, game)
@@ -38,4 +38,14 @@ func (gs *GameStore) GetAllGames(ctx context.Context) ([]Game, error){
 	}
 
 	return games, nil
+}
+
+func (gs *GameStore) DeleteGameById(ctx context.Context, id int64) (string, error) {
+	var title string
+	err := gs.db.QueryRowContext(ctx, `DELETE FROM game WHERE id = $1 RETURNING title`, id).Scan(&title)
+	if err != nil {
+		return "", err
+	}
+
+	return title, nil
 }
