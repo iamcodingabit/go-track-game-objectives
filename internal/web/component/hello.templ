@@ -5,25 +5,14 @@ import (
 )
 
 templ HelloWorld(gameList []store.Game) {
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="stylesheet" href=" https://cdn.jsdelivr.net/npm/@sveti/blades@3/css/blades.min.css"/>
-      <title>My first app with GOTTH</title>
-    </head>
-    <body>
-      <main class="container breakout-all">
-        <h1>Skiiwhoa</h1>
-        <ul>
-          for _, game := range gameList {
-            <li>
-              {game.Title} <small>{game.Genre}</small>
-            </li>
-          }
-        </ul>
-      </main>
-    </body>
-    </html>
+    @Base("Home") {
+      <h1>Skiiwhoa</h1>
+      <ul>
+        for _, game := range gameList {
+          <li>
+            {game.Title} <small>{game.Genre}</small>
+          </li>
+        }
+      </ul>
+    }
 }
