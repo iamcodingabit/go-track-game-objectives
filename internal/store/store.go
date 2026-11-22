@@ -1,90 +1,69 @@
 package store
 
 import (
-	"context"
 	"database/sql"
+	"embed"
+	"io/fs"
+	"log"
+	_ "modernc.org/sqlite"
 )
 
-type Game struct {
-	ID int `json:"id,omitempty"`
-	Title string `json:"title"`
-	Genre string `json:"genre"`
-	CreatedAt string `json:"created_at,omitempty"`
-}
-
-type GameStore struct {
+type Store struct {
 	db *sql.DB
+	Games *GameStore
+	Platform *PlatformStore
 }
 
-func (gs *GameStore) GetAllGames(ctx context.Context) ([]Game, error){
-	rows, err := gs.db.QueryContext(ctx, `SELECT id, title, genre FROM game`)
-	if err != nil {
-		return nil, err
+func NewStore (dbPath string ) (*Store, error) {
+	if dbPath == "" {
+		dbPath = "journal.db"
 	}
-	defer rows.Close()
 
-	games := []Game{}
+	db, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		log.Fatalf("Failed to connect to the database: %s", err.Error())
+	}
+
+	log.Println("Database connection successful")
+
+	return &Store{
+		db: db, 
+		Games: &GameStore{db: db},
+		Platform: &PlatformStore{db: db},
+	}, nil
+}
+
+func (s *Store) Close() error {
+	return s.db.Close()
+}
+
+//go:embed db_queries/schema.sql
+var schemaFS embed.FS
+
+//go:embed db_queries/seed.sql
+var seedFS embed.FS
+func (s *Store) MakeMigrations() {
+	schemaBytes, err := fs.Glob(schemaFS, "db_queries/schema.sql")
+	if err != nil {
+		log.Fatalf ("Failed to load schema.sql: %v", err)
+	}
 	
-	for rows.Next() {
-		var game Game
-		if err := rows.Scan(&game.ID, &game.Title, &game.Genre); err != nil {
-			return nil, err
-		}
-		games = append(games, game)
-	}	
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return games, nil
-}
-
-func (gs *GameStore) GetGameById(ctx context.Context, id int64) (Game, error){
-	var game Game
-	row := gs.db.QueryRowContext(ctx, `SELECT id, title, genre FROM game WHERE id = $1`, id)
-	
-	err := row.Scan(&game.ID, &game.Title, &game.Genre)
-	if err != nil{
-		return game, err
-	}
-
-	return game, nil
-}
-
-func (gs *GameStore) AddNewGame(ctx context.Context, newGame Game) (string, error){
-	var title string
-	err := gs.db.QueryRowContext(ctx, `INSERT INTO game(title, genre) VALUES ($1, $2) RETURNING title`, newGame.Title, newGame.Genre).Scan(&title)
+	statement, err := schemaFS.ReadFile(schemaBytes[0])
+	_, err = s.db.Exec(string(statement))
 	if err != nil {
-		return "", err
+		log.Fatalf("SOMETHING'S WRONG, I CAN FEEL IT! %s", err)
 	}
 
-	return title, nil
-}
-
-func (gs *GameStore) DeleteGameById(ctx context.Context, id int64) (string, error) {
-	var title string
-	err := gs.db.QueryRowContext(ctx, `DELETE FROM game WHERE id = $1 RETURNING title`, id).Scan(&title)
+	seedBytes, err := fs.Glob(seedFS, "db_queries/seed.sql")
 	if err != nil {
-		return "", err
+		log.Fatalf ("Failed to load query.sql: %v", err)
 	}
 
-	return title, nil
-}
-
-func(gs *GameStore) UpdateGameField(ctx context.Context, game Game, id int64) (Game, error) {
-	query := `
-		UPDATE game
-		SET title = COALESCE($1, title),
-			genre = COALESCE($2, genre)
-		WHERE id = $3
-		RETURNING id, title, genre
-	`
-	var updated Game
-	err := gs.db.QueryRowContext(ctx, query, game.Title, game.Genre, id).Scan(&updated.ID, &updated.Title, &updated.Genre)
+	statement, err = seedFS.ReadFile(seedBytes[0])
+	_, err = s.db.Exec(string(statement))
 	if err != nil {
-		return updated, err
+		log.Fatalf("SOMETHING'S WRONG, I CAN FEEL IT! %s", err)
 	}
 
-	return updated, nil
+	log.Println("Migration successful!")
 }
