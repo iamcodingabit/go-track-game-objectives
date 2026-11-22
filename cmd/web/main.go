@@ -25,7 +25,7 @@ func main(){
 	router := http.NewServeMux();
 	router.HandleFunc("GET /api/game", gameHandler.GetAllGamesHandler)
 	router.HandleFunc("DELETE /api/game/{id}", gameHandler.DeleteGameHandler)
-	//router.HandleFunc("POST /game", gameHandler.AddGameHandler)
+	router.HandleFunc("POST /api/game", gameHandler.AddGameHandler)
 
 	router.HandleFunc("GET /", gameWebHandler.GetAllGamesHandler)
 

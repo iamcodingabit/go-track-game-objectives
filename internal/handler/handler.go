@@ -50,6 +50,32 @@ func (gh *GameHandler) DeleteGameHandler(w http.ResponseWriter, r *http.Request)
 	})
 }
 
+func(gh *GameHandler) AddGameHandler(w http.ResponseWriter, r *http.Request){
+	var newGame store.Game
+
+	err := json.NewDecoder(r.Body).Decode(&newGame)
+	if err != nil {
+		log.Println("decode error:", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	res, err := gh.store.AddNewGame(r.Context(), newGame)
+	if err != nil {
+		log.Println("skiwhoa")
+		log.Println("decode error:", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "deleted successfully",
+		"title": res,
+	})
+}
+
 /*
 func(gh *GameHandler) AddGameHandler(write http.ResponseWriter, read *http.Request){
 	var newGame Game

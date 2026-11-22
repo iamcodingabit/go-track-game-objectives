@@ -40,6 +40,16 @@ func (gs *GameStore) GetAllGames(ctx context.Context) ([]Game, error){
 	return games, nil
 }
 
+func (gs *GameStore) AddNewGame(ctx context.Context, newGame Game) (string, error){
+	var title string
+	err := gs.db.QueryRowContext(ctx, `INSERT INTO game(title, genre) VALUES ($1, $2) RETURNING title`, newGame.Title, newGame.Genre).Scan(&title)
+	if err != nil {
+		return "", err
+	}
+
+	return title, nil
+}
+
 func (gs *GameStore) DeleteGameById(ctx context.Context, id int64) (string, error) {
 	var title string
 	err := gs.db.QueryRowContext(ctx, `DELETE FROM game WHERE id = $1 RETURNING title`, id).Scan(&title)
