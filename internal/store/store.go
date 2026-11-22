@@ -40,6 +40,18 @@ func (gs *GameStore) GetAllGames(ctx context.Context) ([]Game, error){
 	return games, nil
 }
 
+func (gs *GameStore) GetGameById(ctx context.Context, id int64) (Game, error){
+	var game Game
+	row := gs.db.QueryRowContext(ctx, `SELECT id, title, genre FROM game WHERE id = $1`, id)
+	
+	err := row.Scan(&game.ID, &game.Title, &game.Genre)
+	if err != nil{
+		return game, err
+	}
+
+	return game, nil
+}
+
 func (gs *GameStore) AddNewGame(ctx context.Context, newGame Game) (string, error){
 	var title string
 	err := gs.db.QueryRowContext(ctx, `INSERT INTO game(title, genre) VALUES ($1, $2) RETURNING title`, newGame.Title, newGame.Genre).Scan(&title)
@@ -58,4 +70,21 @@ func (gs *GameStore) DeleteGameById(ctx context.Context, id int64) (string, erro
 	}
 
 	return title, nil
+}
+
+func(gs *GameStore) UpdateGameField(ctx context.Context, game Game, id int64) (Game, error) {
+	query := `
+		UPDATE game
+		SET title = COALESCE($1, title),
+			genre = COALESCE($2, genre)
+		WHERE id = $3
+		RETURNING id, title, genre
+	`
+	var updated Game
+	err := gs.db.QueryRowContext(ctx, query, game.Title, game.Genre, id).Scan(&updated.ID, &updated.Title, &updated.Genre)
+	if err != nil {
+		return updated, err
+	}
+
+	return updated, nil
 }
