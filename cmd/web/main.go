@@ -19,20 +19,23 @@ func main(){
 	defer db.Close()
 	db.MakeMigrations()
 
-	gameHandler := handler.NewGameHandler(db)
-	storeHandler := handler.NewPlatformHandler(db)
-
+	handler, err := handler.NewHandler(db)
 	gameWebHandler := web.NewGameWebHandler(db)
 
 	router := http.NewServeMux();
-	router.HandleFunc("GET /api/games", gameHandler.GetAllGamesHandler)
-	router.HandleFunc("GET /api/game/{id}", gameHandler.GetGameByIdHandler)
-	router.HandleFunc("DELETE /api/game/{id}", gameHandler.DeleteGameHandler)
-	router.HandleFunc("POST /api/game", gameHandler.AddGameHandler)
-	router.HandleFunc("PATCH /api/game/{id}", gameHandler.UpdateGameFieldHandler)
+	router.HandleFunc("GET /api/games", handler.Game.GetAllGamesHandler)
+	router.HandleFunc("GET /api/game/{id}", handler.Game.GetGameByIdHandler)
+	router.HandleFunc("DELETE /api/game/{id}", handler.Game.DeleteGameHandler)
+	router.HandleFunc("POST /api/game", handler.Game.AddGameHandler)
+	router.HandleFunc("PATCH /api/game/{id}", handler.Game.UpdateGameFieldHandler)
 
-	router.HandleFunc("GET /api/platforms", storeHandler.GetAllPlatformHandler)
-	router.HandleFunc("POST /api/platform", storeHandler.AddNewPlatformHandler)
+	router.HandleFunc("GET /api/platforms", handler.Platform.GetAllPlatformHandler)
+	router.HandleFunc("POST /api/platform", handler.Platform.AddNewPlatformHandler)
+	//DELETE PLATFORM DETAIL
+	//UPDATE PLATFORM DETAIL
+
+	//GET ALL PLAYTHROUGHS
+	//GET ONE PLAYTHROUGH WITH OBJECTIVES
 
 	router.HandleFunc("GET /", gameWebHandler.GetAllGamesHandler)
 
