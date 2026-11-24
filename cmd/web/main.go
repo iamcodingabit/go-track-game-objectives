@@ -31,8 +31,8 @@ func main(){
 
 	router.HandleFunc("GET /api/platforms", handler.Platform.GetAllPlatformHandler)
 	router.HandleFunc("POST /api/platform", handler.Platform.AddNewPlatformHandler)
-	//DELETE PLATFORM DETAIL
-	//UPDATE PLATFORM DETAIL
+	router.HandleFunc("DELETE /api/platform/{id}", handler.Platform.DeletePlatformHandler) //DELETE PLATFORM DETAIL
+	router.HandleFunc("PATCH /api/platform/{id}", handler.Platform.UpdatePlatformHandler)//UPDATE PLATFORM DETAIL
 
 	//GET ALL PLAYTHROUGHS
 	//GET ONE PLAYTHROUGH WITH OBJECTIVES

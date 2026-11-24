@@ -55,3 +55,54 @@ func (ph *PlatformHandler) AddNewPlatformHandler(w http.ResponseWriter, r *http.
 		"name": res.Name,
 	})
 }
+
+func(ph *PlatformHandler) DeletePlatformHandler(w http.ResponseWriter, r *http.Request){
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		return
+	}
+
+	deletedName, err := ph.store.Delete(r.Context(), id)
+	if err != nil {
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "deleted successfully",
+		"title":   deletedName,
+	})
+}
+
+func(ph *PlatformHandler) UpdatePlatformHandler(w http.ResponseWriter, r *http.Request){
+	var updatedPlatform store.Platform
+	err := json.NewDecoder(r.Body).Decode(&updatedPlatform)
+	if err != nil {
+		log.Println("decode error:", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		return
+	}
+
+	res, err := ph.store.Update(r.Context(), updatedPlatform, id)
+	if err != nil {
+		log.Println("decode error:", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "new game successfully added",
+		"id": strconv.Itoa(res.ID),
+		"name": res.Name,
+	})
+}
