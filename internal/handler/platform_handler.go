@@ -65,6 +65,12 @@ func(ph *PlatformHandler) DeletePlatformHandler(w http.ResponseWriter, r *http.R
 
 	deletedName, err := ph.store.Delete(r.Context(), id)
 	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "deletion failed",
+			"error":  err.Error(),
+		})	
 		return
 	}
 

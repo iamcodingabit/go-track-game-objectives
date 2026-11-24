@@ -51,9 +51,8 @@ func(ps *PlatformStore) AddNewPlatform (ctx context.Context, newPlatform Platfor
 
 func(ps *PlatformStore) Delete (ctx context.Context, id int64) (string, error) {
 	var name string
-	err := ps.db.QueryRowContext(ctx, `DELETE FROM platform WHERE id = $1 RETURNING title`, id).Scan(&name)
+	err := ps.db.QueryRowContext(ctx, `DELETE FROM platform WHERE id = $1 RETURNING name`, id).Scan(&name)
 	if err != nil {
-		
 		return name, err
 	}
 
@@ -63,7 +62,7 @@ func(ps *PlatformStore) Delete (ctx context.Context, id int64) (string, error) {
 func(ps *PlatformStore)Update(ctx context.Context, platform Platform, id int64) (Platform, error){
 	var updatedPlatform Platform
 	query := `
-		UPDATE game
+		UPDATE platform
 		SET name = COALESCE($1, name)
 		WHERE id = $2
 		RETURNING id, name
