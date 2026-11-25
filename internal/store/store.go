@@ -12,6 +12,7 @@ type Store struct {
 	db *sql.DB
 	Games *GameStore
 	Platform *PlatformStore
+	Playthrough *PlaythroughStore
 }
 
 func NewStore (dbPath string ) (*Store, error) {
@@ -30,6 +31,7 @@ func NewStore (dbPath string ) (*Store, error) {
 		db: db, 
 		Games: &GameStore{db: db},
 		Platform: &PlatformStore{db: db},
+		Playthrough: &PlaythroughStore{db: db},
 	}, nil
 }
 

@@ -34,7 +34,7 @@ func main(){
 	router.HandleFunc("DELETE /api/platform/{id}", handler.Platform.DeletePlatformHandler) //DELETE PLATFORM DETAIL
 	router.HandleFunc("PATCH /api/platform/{id}", handler.Platform.UpdatePlatformHandler)//UPDATE PLATFORM DETAIL
 
-	//GET ALL PLAYTHROUGHS
+	//router.HandleFunc("GET /api/playthroughs", )//GET ALL PLAYTHROUGHS
 	//GET ONE PLAYTHROUGH WITH OBJECTIVES
 
 	router.HandleFunc("GET /", gameWebHandler.GetAllGamesHandler)
